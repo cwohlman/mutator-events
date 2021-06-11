@@ -1,7 +1,7 @@
 import Context from "./Context";
 import { Mutation } from "./framework";
 import { Mutable, MutatorMethods } from "./Mutable";
-import { Map } from "immutable";
+import { Map, List as ImutableList } from "immutable";
 
 export class Ref {
   constructor(public $: string) {}
@@ -42,6 +42,15 @@ export class Add extends Mutation {
     public value: Ref
   ) {
     super("add", target);
+  }
+}
+export class Move extends Mutation {
+  constructor(
+    target: string,
+    public after: Ref | null, // after null adds to head of list
+    public value: Ref
+  ) {
+    super("move", target);
   }
 }
 export class Remove extends Mutation {
@@ -114,5 +123,60 @@ export class Dict extends Mutable {
       if (value instanceof Val) return value.$;
       else return context.get(value.$);
     });
+  }
+}
+export class List extends Mutable {
+  constructor(ref: string, private keys: ImutableList<Ref>) {
+    super(ref);
+  }
+
+  apply(event: Mutation): Mutable {
+    if (event instanceof Add || event instanceof Move) {
+      // TODO: add should assert that value does not exist,
+      //       move should assert that it does
+
+      const insertionIndex = event.after ? this.keys.indexOf(event.after) : -1;
+
+      const newSet = this.keys.insert(insertionIndex, event.value);
+
+      return new List(this.ref, newSet);
+    }
+
+    return super.apply(event);
+  }
+
+  toJS(context: Context) {
+    return this.keys.map((value, key) => {
+      if (value instanceof Val) return value.$;
+      else return context.get(value.$);
+    }).toJS();
+  }
+}
+
+export class Text extends Mutable {
+  constructor(ref: string, private keys: ImutableList<Ref>) {
+    super(ref);
+  }
+
+  apply(event: Mutation): Mutable {
+    if (event instanceof Add || event instanceof Move) {
+      // TODO: add should assert that value does not exist,
+      //       move should assert that it does
+
+      const insertionIndex = event.after ? this.keys.indexOf(event.after) : -1;
+
+      const newSet = this.keys.insert(insertionIndex, event.value);
+
+      return new List(this.ref, newSet);
+    }
+
+    return super.apply(event);
+  }
+
+  toJS(context: Context) {
+    return this.keys.map((value, key) => {
+      if (value instanceof Val) return value.$;
+      else return context.get(value.$);
+    }).toJS().join("");
   }
 }
