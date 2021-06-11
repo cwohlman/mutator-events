@@ -10,6 +10,19 @@ Goals/Constraints (in order):
 6. Multiple users editing
 7. Real-time editing
 
+Solution:
+
+- Mutable:
+    1. Each Mutable type is a custom type, examples: `Map<Key, Value>`, `List<T>`, `Set<T>`, `Graph<Node, Edge>`, `Box<T>`, `Remote<T>`, `Lazy<T>`, `Ref`, `Compute<Act<T>, Mutable>`
+    2. Every Mutable type has an apply method which takes events and either applies it in some custom way, or executs event.apply(this) or (this.children) as appropriate
+    3. Every Mutable type which contains Mutable children has a `children` property where those children each have a unique key, as those children are moved around the internal structure of the type (if applicable) they retain subsequent changes
+    4. Every Mutable type has a `toJS` method which returns some plain javascript value, e.g. an object, an instance of something, an array, etc.
+- Mutation:
+  - Contains an optional `apply` method, which takes a Mutable and returns a new Mutable
+  - Examples: `Put<T>`, `Place<T, index>`, `Act<T>` `Iterate<T, Act<T>>`
+  - Contains a key which is `string[]` and can be empty (applies to the current object)
+- Bus:
+  - Accepts events
 
 Examples:
 1. I should be able to undo all actions since some state (e.g. restore that state)
