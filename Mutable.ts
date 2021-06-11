@@ -27,6 +27,6 @@ export abstract class Mutable {
   abstract toJS(context: Context): unknown;
 
   clone() {
-    return Object.assign(Object.create(this.constructor), this);
+    return Object.assign(Object.create(this.constructor.prototype), this);
   }
 }

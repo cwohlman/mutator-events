@@ -6,10 +6,10 @@ import { Mutable } from "./Mutable";
 export default class Context {
   constructor(private readonly refMap: Map<string, Mutable> = Map()) { }
 
-  static create(target: string, events: Mutation[]): Mutable | undefined {
+  static resolve(target: string, events: Mutation[]): unknown {
     const context = new Context().applyAll(events);
 
-    return context.get(target);
+    return context.get(target)?.toJS(context);
   }
 
   apply(event: Mutation) {
