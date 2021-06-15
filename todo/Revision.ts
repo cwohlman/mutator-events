@@ -1,10 +1,9 @@
-import { Bus } from "./Bus";
-import Context from "./Context";
+import State from "./Context";
 
 export default abstract class Revision {
   constructor(
     id: string,
   ) {}
 
-  abstract apply(context: Context): Context
+  abstract apply(context: State): State
 }

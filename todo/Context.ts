@@ -2,12 +2,12 @@ import { Map, List } from "immutable";
 import Mutable from "./Mutable";
 import Mutation from "./Mutation";
 
-export default class Context {
+export default class State {
   constructor(
     public readonly events: List<Mutation>,
-    public readonly initialState: Map<string, Mutable> = Map()
+    public readonly snapshot: Map<string, Mutable> = Map()
   ){}
 
-  // apply event => new Context
+  apply(event: Mutation) { return new State(this.events.push(event), this.snapshot); }
   // apply update => new Context
 }
