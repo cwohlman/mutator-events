@@ -24,7 +24,7 @@ describe("Hash", () => {
   describe("InitKey", () => {
     it("should set the key", () => {
       const hash = new Keyed(Map({ "1": new Ref("5") }), Map({ foo: "1" }));
-      const change = new InitKey("1", [], "foo", "99", new Box("99"));
+      const change = new InitKey("1", [], "99", "foo", new Box("99"));
 
       const newHash = hash.apply(change);
 
